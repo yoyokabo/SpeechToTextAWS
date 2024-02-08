@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <center><title>File Upload</title>
+</head>
+<body>
+    <h1>Transcribe a File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <p>Please select your desired format</p>
+        <input type="radio" id="srt" name="typer" value="srt">
+        <label for="srt">SRT</label><br>
+        <input type="radio" id="vtt" name="typer" value="vtt">
+        <label for="vtt">VTT</label><br>
+        <input type="radio" id="text" name="typer" value="text">
+        <label for="Text">Text</label><br><br>
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form><br>
+    <h1>Transcribed Text</h1>
+    <form action="/" method="post">
+        <label for="text">Enter Text:</label><br>
+        <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ transcription }}</textarea><br><br>
+    </form>
+</center>
+</body>
+</html>
