@@ -37,8 +37,9 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))         
 
     typer = request.form['typer']
+    lang = request.form['lang']
     print(typer)
-    processed_text = process_file(file,typer)
+    processed_text = process_file(file,typer,lang)
 
     # Process text inline or redirect in case SRT or VTT
     if typer == "text":
@@ -47,7 +48,7 @@ def upload_file():
         return redirect(processed_text)
 
 # Process the uploaded file using AWS
-def process_file(file,typer):
+def process_file(file,typer,lang):
     filename = secure_filename(file.filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     print(file_path)
@@ -57,7 +58,7 @@ def process_file(file,typer):
     job_name = current_time
     filesplit = file_path.split(".")
     format = filesplit[len(filesplit)-1]
-    return aws_contact(file_path,bucket_name,job_name,format,typer)
+    return aws_contact(file_path,bucket_name,job_name,format,typer,lang)
 
 if __name__ == '__main__':
     app.run(debug=True)
