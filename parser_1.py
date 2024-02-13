@@ -5,6 +5,11 @@ import datetime
 from collections import Counter
 import statistics
 
+DELAY_THRESHOLD = 0.7
+MOST_COMMON_WORDS = 3
+PAUSE_THRESHOLD = 0.7
+
+
 
 def parseSpeakers(data, labels, speaker_start_times):
     for label in labels:
@@ -49,12 +54,14 @@ def parseWords(sp1,sp2,n):
  counter1 = Counter(split1)
  split2 = sp2.split()
  counter2 = Counter(split2)
- return counter1.most_common(n) , counter2.most_common(n)
+ return counter1.most_common(MOST_COMMON_WORDS) , counter2.most_common(MOST_COMMON_WORDS)
 
 def parsePace(data):
  segments = data['results']['speaker_labels']['segments']
- sp1total = []
- sp2total = []
+ sp1avg = []
+ sp2avg = []
+ sp1total = 0
+ sp2total = 0
  for segment in segments:
   start_time = segment['start_time']
   end_time = segment['end_time']
@@ -64,12 +71,54 @@ def parsePace(data):
   for item in segment['items']:
    wordcount += 1
   if speaker_label == "spk_0":
-    sp1total.append(float(wordcount)/timediff)
+    sp1avg.append(float(wordcount)/timediff)
+    sp1total += timediff
   else:
-    sp2total.append(float(wordcount)/timediff)
- avg1 = statistics.fmean(sp1total)
- avg2 = statistics.fmean(sp2total)
- return int(avg1)*60,int(avg2)*60   
+    sp2avg.append(float(wordcount)/timediff)
+    sp2total += timediff
+ avg1 = statistics.fmean(sp1avg)
+ avg2 = statistics.fmean(sp2avg)
+ return int(avg1)*60, int(avg2)*60 , sp1total , sp2total
+
+def speechmatics(data):
+ pause_counter1 = 0
+ pause_counter2 = 0
+ last_speaker = ''
+ segment_end_time = 0
+ sp1_delay = 0
+ sp2_delay = 0
+ interrupts1 = 0
+ interrupts2 = 0
+ segments = data['results']['speaker_labels']['segments']
+ for segment in segments:
+  start_time = segment['start_time']
+  end_time = segment['end_time']
+  speaker_label = segment['speaker_label']
+  if float(segment_end_time) > 0:
+   if last_speaker == speaker_label:
+    temp = float(start_time) - float(segment_end_time)
+    if temp > PAUSE_THRESHOLD:
+     if speaker_label == "spk_0":
+      pause_counter1 += 1
+     else:
+      pause_counter2 += 1
+   else:
+    if float(segment_end_time) > float(start_time):
+     if speaker_label == "spk_0":
+      interrupts1 += 1
+     else:
+      interrupts2 += 1
+    else:
+     temp = float(start_time) - float(segment_end_time)
+     if temp > DELAY_THRESHOLD:
+      if speaker_label == "spk_0":
+       sp1_delay += temp
+     else:
+       sp2_delay += temp
+  last_speaker = speaker_label
+  segment_end_time = end_time
+ return pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2
+     
 
 
  
