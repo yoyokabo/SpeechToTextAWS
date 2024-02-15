@@ -71,12 +71,12 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             avg1 , avg2 , total1 , total2 = parsePace(data)
             line = line + '\nSpeaker 0 pace :' + str(int(avg1)) + " WPM" + "  Spoke for a total of " + str(int(total1)) + " Seconds" + '\nSpeaker 1 pace :' + str(int(avg2)) + " WPM" + "  Spoke for a total of " + str(int(total2)) + " Seconds"
             pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2 = speechmatics(data)
-            line = line + '\n Pauses for speaker 0 : ' + str(pause_counter1)
-            line = line + '\n Pauses for speaker 1 : ' + str(pause_counter2)
-            line = line + '\n Interrupts for speaker 0 : ' + str(interrupts1)
-            line = line + '\n Interrupts for speaker 1 : ' + str(interrupts2)
-            line = line + '\n Total Delay for speaker 0 : ' + str(sp1_delay)
-            line = line + '\n Total Delay for speaker 1 : ' + str(sp2_delay)
+            line = line + '\nPauses for speaker 0 : ' + str(pause_counter1)
+            line = line + '\nPauses for speaker 1 : ' + str(pause_counter2)
+            line = line + '\nInterrupts for speaker 0 : ' + str(interrupts1)
+            line = line + '\nInterrupts for speaker 1 : ' + str(interrupts2)
+            line = line + '\nTotal Delay for speaker 0 : ' + str(sp1_delay)
+            line = line + '\nTotal Delay for speaker 1 : ' + str(sp2_delay)
         if data :
             return line #Return URL for redirect
     else:

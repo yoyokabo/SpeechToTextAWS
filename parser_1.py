@@ -10,7 +10,6 @@ MOST_COMMON_WORDS = 3
 PAUSE_THRESHOLD = 0.7
 
 
-
 def parseSpeakers(data, labels, speaker_start_times):
     for label in labels:
      for item in label['items']:
@@ -118,7 +117,3 @@ def speechmatics(data):
   last_speaker = speaker_label
   segment_end_time = end_time
  return pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2
-     
-
-
- 

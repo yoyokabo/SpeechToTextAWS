@@ -5,7 +5,7 @@ import os
 from werkzeug.utils import secure_filename
 from converter import convert_mpeg_to_wav
 
-UPLOAD_FOLDER = 'E:\Transcription\examples'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'Uploads')
 ALLOWED_EXTENSIONS = {'mp3', 'mp4', 'wav', 'flac', 'ogg', 'amr' , 'webm' , 'm4a' , 'mpeg'} #All formats supported by AWS
 
 app = Flask(__name__)
