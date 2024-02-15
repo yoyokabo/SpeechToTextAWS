@@ -3,9 +3,10 @@ from aws import aws_contact
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+from converter import convert_mpeg_to_wav
 
 UPLOAD_FOLDER = 'E:\Transcription\examples'
-ALLOWED_EXTENSIONS = {'mp3', 'mp4', 'wav', 'flac', 'ogg', 'amr' , 'webm' , 'm4a'} #All formats supported by AWS
+ALLOWED_EXTENSIONS = {'mp3', 'mp4', 'wav', 'flac', 'ogg', 'amr' , 'webm' , 'm4a' , 'mpeg'} #All formats supported by AWS
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -51,8 +52,11 @@ def upload_file():
 def process_file(file,typer,lang):
     filename = secure_filename(file.filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if file.filename.rsplit('.', 1)[1].lower() == 'mpeg':
+            file_path = convert_mpeg_to_wav(file_path)
+            print('aha caught ya')
     print(file_path)
-    bucket_name = 'yk-dev-tts'
+    bucket_name = 'yk-dev-tts1'
     now = datetime.now()
     current_time = now.strftime("%j-%H-%M-%S")  # Job Name saved with current date and time to avoid overlaps 
     job_name = current_time
