@@ -75,8 +75,8 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             line = line + '\nPauses for speaker 1 : ' + str(pause_counter2)
             line = line + '\nInterrupts for speaker 0 : ' + str(interrupts1)
             line = line + '\nInterrupts for speaker 1 : ' + str(interrupts2)
-            line = line + '\nTotal Delay for speaker 0 : ' + str(sp1_delay)
-            line = line + '\nTotal Delay for speaker 1 : ' + str(sp2_delay)
+            line = line + '\nTotal Delay for speaker 0 : ' + str(int(sp1_delay))
+            line = line + '\nTotal Delay for speaker 1 : ' + str(int(sp2_delay))
         if data :
             return line #Return URL for redirect
     else:

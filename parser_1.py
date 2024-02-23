@@ -77,13 +77,13 @@ def parsePace(data):
     sp2total += timediff
  avg1 = statistics.fmean(sp1avg)
  avg2 = statistics.fmean(sp2avg)
- return int(avg1)*60, int(avg2)*60 , sp1total , sp2total
+ return min(int(avg1)*60,60), min(int(avg2)*60,60) , sp1total , sp2total
 
 def speechmatics(data):
  pause_counter1 = 0
  pause_counter2 = 0
  last_speaker = ''
- segment_end_time = 0
+ previous_end_time = 0
  sp1_delay = 0
  sp2_delay = 0
  interrupts1 = 0
@@ -93,27 +93,27 @@ def speechmatics(data):
   start_time = segment['start_time']
   end_time = segment['end_time']
   speaker_label = segment['speaker_label']
-  if float(segment_end_time) > 0:
+  if float(previous_end_time) > 0:
    if last_speaker == speaker_label:
-    temp = float(start_time) - float(segment_end_time)
+    temp = float(start_time) - float(previous_end_time)
     if temp > PAUSE_THRESHOLD:
      if speaker_label == "spk_0":
       pause_counter1 += 1
      else:
       pause_counter2 += 1
    else:
-    if float(segment_end_time) > float(start_time):
+    if float(previous_end_time) >= float(start_time):
      if speaker_label == "spk_0":
       interrupts1 += 1
      else:
       interrupts2 += 1
     else:
-     temp = float(start_time) - float(segment_end_time)
+     temp = float(start_time) - float(previous_end_time)
      if temp > DELAY_THRESHOLD:
       if speaker_label == "spk_0":
        sp1_delay += temp
      else:
        sp2_delay += temp
   last_speaker = speaker_label
-  segment_end_time = end_time
+  previous_end_time = end_time
  return pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2

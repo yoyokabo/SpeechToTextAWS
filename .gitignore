@@ -3,3 +3,4 @@ jsons/
 __pycache__
 .venv
 converted/
+envparam.py
