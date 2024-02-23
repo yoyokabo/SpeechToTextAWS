@@ -77,7 +77,7 @@ def parsePace(data):
     sp2total += timediff
  avg1 = statistics.fmean(sp1avg)
  avg2 = statistics.fmean(sp2avg)
- return min(int(avg1)*60,60), min(int(avg2)*60,60) , sp1total , sp2total
+ return max(int(avg1)*60,60), max(int(avg2)*60,60) , sp1total , sp2total
 
 def speechmatics(data):
  pause_counter1 = 0
