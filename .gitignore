@@ -1,6 +1,7 @@
 jsons/
 *.json
-__pycache__
+__pycache__/
 .venv
 converted/
 envparam.py
+Uploads/* 

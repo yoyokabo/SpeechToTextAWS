@@ -6,6 +6,7 @@ import time
 from collections import Counter
 import statistics
 from parser_1 import parsePace , parseSpeakers , parseWords ,speechmatics
+from ToGPT import *
 
 def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
 
@@ -68,6 +69,7 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             labels = data['results']['speaker_labels']['segments']
             speaker_start_times={}
             line = parseSpeakers(data, labels, speaker_start_times)
+            summary = getFromGPT(SUMMARIZE,line)
             avg1 , avg2 , total1 , total2 = parsePace(data)
             line = line + '\nSpeaker 0 pace :' + str(int(avg1)) + " WPM" + "  Spoke for a total of " + str(int(total1)) + " Seconds" + '\nSpeaker 1 pace :' + str(int(avg2)) + " WPM" + "  Spoke for a total of " + str(int(total2)) + " Seconds"
             pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2 = speechmatics(data)
@@ -77,6 +79,7 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             line = line + '\nInterrupts for speaker 1 : ' + str(interrupts2)
             line = line + '\nTotal Delay for speaker 0 : ' + str(int(sp1_delay))
             line = line + '\nTotal Delay for speaker 1 : ' + str(int(sp2_delay))
+            line = line + '\n' + summary
         if data :
             return line #Return URL for redirect
     else:
