@@ -46,7 +46,7 @@ def parseSpeakers(data, labels, speaker_start_times):
        sp2 = sp2 + line_data.get('line')
       ms1 , ms2 = parseWords(sp1,sp2,3)
       line=line +'[' + str(datetime.timedelta(seconds=int(round(float(line_data['time']))))) + '] ' + line_data.get('speaker') + ': ' + line_data.get('line') + '\n'
-    return line + '\nSpeaker 0 most used words ' + str(ms1) + '\nSpeaker 1 most used words ' + str(ms2)
+    return line + '\nspeaker 0 most used words ' + str(ms1) + '\nspeaker 1 most used words ' + str(ms2)
 
 def parseWords(sp1,sp2,n):
  split1 = sp1.split()

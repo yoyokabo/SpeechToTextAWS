@@ -69,9 +69,9 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             labels = data['results']['speaker_labels']['segments']
             speaker_start_times={}
             line = parseSpeakers(data, labels, speaker_start_times)
-            summary = getFromGPT(SUMMARIZE,line)
+            summary = getFromGPT(SUMMARIZE,line).split('@')
             avg1 , avg2 , total1 , total2 = parsePace(data)
-            line = line + '\nSpeaker 0 pace :' + str(int(avg1)) + " WPM" + "  Spoke for a total of " + str(int(total1)) + " Seconds" + '\nSpeaker 1 pace :' + str(int(avg2)) + " WPM" + "  Spoke for a total of " + str(int(total2)) + " Seconds"
+            line = line + '\nspeaker 0 pace :' + str(int(avg1)) + " WPM" + "  Spoke for a total of " + str(int(total1)) + " Seconds" + '\nspeaker 1 pace :' + str(int(avg2)) + " WPM" + "  Spoke for a total of " + str(int(total2)) + " Seconds"
             pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2 = speechmatics(data)
             line = line + '\nPauses for speaker 0 : ' + str(pause_counter1)
             line = line + '\nPauses for speaker 1 : ' + str(pause_counter2)
@@ -79,7 +79,19 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             line = line + '\nInterrupts for speaker 1 : ' + str(interrupts2)
             line = line + '\nTotal Delay for speaker 0 : ' + str(int(sp1_delay))
             line = line + '\nTotal Delay for speaker 1 : ' + str(int(sp2_delay))
-            line = line + '\n' + summary
+            if 'spk_0' in summary[1]:
+                line = line.replace("spk_0","Agent")
+                line = line.replace("spk_1","Customer")
+                line = line.replace("speaker 0","Agent")
+                line = line.replace("speaker 1","Customer")
+                print("replaced")
+            else:
+                line = line.replace("spk_1","Agent")
+                line = line.replace("spk_0","Customer")
+                line = line.replace("speaker 1","Agent")
+                line = line.replace("speaker 0","Customer")
+                print("-replaced")
+            line = line + '\n' + summary[0] + "Agent : " +  summary[1]
         if data :
             return line #Return URL for redirect
     else:
