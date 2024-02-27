@@ -1,16 +1,14 @@
-import json
-import os
-import time
 import datetime
 from collections import Counter
 import statistics
+import re
 
 DELAY_THRESHOLD = 0.7
 MOST_COMMON_WORDS = 3
 PAUSE_THRESHOLD = 0.7
 
 
-def parseSpeakers(data, labels, speaker_start_times):
+def parseSpeakers(data, labels, speaker_start_times,times=True):
     for label in labels:
      for item in label['items']:
       speaker_start_times[item['start_time']] =item['speaker_label']
@@ -18,6 +16,8 @@ def parseSpeakers(data, labels, speaker_start_times):
     lines=[]
     line=''
     time=0
+    timesc=0
+    first = 0
     speaker='null'
     i=0
     for item in items:
@@ -37,6 +37,7 @@ def parseSpeakers(data, labels, speaker_start_times):
       line = line + ' ' + content
     lines.append({'speaker':speaker, 'line':line,'time':time})
     sorted_lines = sorted(lines,key=lambda k: float(k['time']))
+    
     sp1 = ""
     sp2 = ""
     for line_data in sorted_lines:
@@ -45,7 +46,11 @@ def parseSpeakers(data, labels, speaker_start_times):
       else :
        sp2 = sp2 + line_data.get('line')
       ms1 , ms2 = parseWords(sp1,sp2,3)
-      line=line +'[' + str(datetime.timedelta(seconds=int(round(float(line_data['time']))))) + '] ' + line_data.get('speaker') + ': ' + line_data.get('line') + '\n'
+      if times:
+       line=line +'[' + str(datetime.timedelta(seconds=int(round(float(line_data['time']))))) + '] ' + line_data.get('speaker') + ': ' + line_data.get('line') + '\n'
+      else:
+       line=line +'[' + str(timesc) + '] ' + line_data.get('speaker') + ': ' + line_data.get('line') + '\n'
+       timesc += 1
     return line + '\nspeaker 0 most used words ' + str(ms1) + '\nspeaker 1 most used words ' + str(ms2)
 
 def parseWords(sp1,sp2,n):
@@ -117,3 +122,13 @@ def speechmatics(data):
   last_speaker = speaker_label
   previous_end_time = end_time
  return pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2
+
+def counting():
+ n = 1
+ while True:
+  yield n
+  n += 1
+def tokensaver(lines):
+ c = 1
+ subed = re.sub("[\(\[].*?[\)\]]", "", lines)
+ return subed

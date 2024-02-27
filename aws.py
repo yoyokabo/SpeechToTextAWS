@@ -5,7 +5,7 @@ import os
 import time
 from collections import Counter
 import statistics
-from parser_1 import parsePace , parseSpeakers , parseWords ,speechmatics
+from parser_1 import parsePace , parseSpeakers , parseWords ,speechmatics , tokensaver
 from ToGPT import *
 
 def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
@@ -69,7 +69,32 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             labels = data['results']['speaker_labels']['segments']
             speaker_start_times={}
             line = parseSpeakers(data, labels, speaker_start_times)
+            tokensaver = parseSpeakers(data, labels, speaker_start_times,False)
             summary = getFromGPT(SUMMARIZE,line).split('@')
+            if 'spk_0' in summary[1]:
+                line = line.replace("spk_0","Agent")
+                line = line.replace("spk_1","Customer")
+                line = line.replace("speaker 0","Agent")
+                line = line.replace("speaker 1","Customer")
+                tokensaver = line.replace("spk_0","Agent")
+                tokensaver = tokensaver.replace("spk_1","Customer")
+                tokensaver = tokensaver.replace("speaker 0","Agent")
+                tokensaver = tokensaver.replace("speaker 1","Customer")
+                
+                
+                print("replaced")
+            else:
+                line = line.replace("spk_1","Agent")
+                line = line.replace("spk_0","Customer")
+                line = line.replace("speaker 1","Agent")
+                line = line.replace("speaker 0","Customer")
+                tokensaver = tokensaver.replace("spk_1","Agent")
+                tokensaver = tokensaver.replace("spk_0","Customer")
+                tokensaver = tokensaver.replace("speaker 1","Agent")
+                tokensaver = tokensaver.replace("speaker 0","Customer")
+                print("-replaced")
+            senti = getFromGPT(SENTIMENT,tokensaver)
+            clarityscore = getFromGPT(CLARITY,tokensaver)
             avg1 , avg2 , total1 , total2 = parsePace(data)
             line = line + '\nspeaker 0 pace :' + str(int(avg1)) + " WPM" + "  Spoke for a total of " + str(int(total1)) + " Seconds" + '\nspeaker 1 pace :' + str(int(avg2)) + " WPM" + "  Spoke for a total of " + str(int(total2)) + " Seconds"
             pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2 = speechmatics(data)
@@ -91,7 +116,7 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
                 line = line.replace("speaker 1","Agent")
                 line = line.replace("speaker 0","Customer")
                 print("-replaced")
-            line = line + '\n' + summary[0] + "Agent : " +  summary[1]
+            line = line + '\n' + summary[0] + "Agent : " + '\n'+  summary[1]+ '\n' + senti + '\n' + clarityscore + '\n' + '\n' + tokensaver
         if data :
             return line #Return URL for redirect
     else:
