@@ -5,8 +5,9 @@ import os
 import time
 from collections import Counter
 import statistics
-from parser_1 import parsePace , parseSpeakers , parseWords ,speechmatics , tokensaver
+from transcription import *
 from ToGPT import *
+
 
 def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
 
@@ -66,61 +67,24 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
     if typer == "text":
         with urllib.request.urlopen(download) as url:
             data = json.load(url)
-            labels = data['results']['speaker_labels']['segments']
-            speaker_start_times={}
-            line = parseSpeakers(data, labels, speaker_start_times)
-            tokensaver = parseSpeakers(data, labels, speaker_start_times,False)
-            summary = getFromGPT(SUMMARIZE,line).split('@')
-            if 'spk_0' in summary[1]:
-                line = line.replace("spk_0","Agent")
-                line = line.replace("spk_1","Customer")
-                line = line.replace("speaker 0","Agent")
-                line = line.replace("speaker 1","Customer")
-                tokensaver = line.replace("spk_0","Agent")
-                tokensaver = tokensaver.replace("spk_1","Customer")
-                tokensaver = tokensaver.replace("speaker 0","Agent")
-                tokensaver = tokensaver.replace("speaker 1","Customer")
-                
-                
-                print("replaced")
-            else:
-                line = line.replace("spk_1","Agent")
-                line = line.replace("spk_0","Customer")
-                line = line.replace("speaker 1","Agent")
-                line = line.replace("speaker 0","Customer")
-                tokensaver = tokensaver.replace("spk_1","Agent")
-                tokensaver = tokensaver.replace("spk_0","Customer")
-                tokensaver = tokensaver.replace("speaker 1","Agent")
-                tokensaver = tokensaver.replace("speaker 0","Customer")
-                print("-replaced")
-            senti = getFromGPT(SENTIMENT,tokensaver)
-            clarityscore = getFromGPT(CLARITY,tokensaver)
-            avg1 , avg2 , total1 , total2 = parsePace(data)
-            line = line + '\nspeaker 0 pace :' + str(int(avg1)) + " WPM" + "  Spoke for a total of " + str(int(total1)) + " Seconds" + '\nspeaker 1 pace :' + str(int(avg2)) + " WPM" + "  Spoke for a total of " + str(int(total2)) + " Seconds"
-            pause_counter1 , pause_counter2 , sp1_delay ,sp2_delay ,interrupts1 ,interrupts2 = speechmatics(data)
-            line = line + '\nPauses for speaker 0 : ' + str(pause_counter1)
-            line = line + '\nPauses for speaker 1 : ' + str(pause_counter2)
-            line = line + '\nInterrupts for speaker 0 : ' + str(interrupts1)
-            line = line + '\nInterrupts for speaker 1 : ' + str(interrupts2)
-            line = line + '\nTotal Delay for speaker 0 : ' + str(int(sp1_delay))
-            line = line + '\nTotal Delay for speaker 1 : ' + str(int(sp2_delay))
-            if 'spk_0' in summary[1]:
-                line = line.replace("spk_0","Agent")
-                line = line.replace("spk_1","Customer")
-                line = line.replace("speaker 0","Agent")
-                line = line.replace("speaker 1","Customer")
-                print("replaced")
-            else:
-                line = line.replace("spk_1","Agent")
-                line = line.replace("spk_0","Customer")
-                line = line.replace("speaker 1","Agent")
-                line = line.replace("speaker 0","Customer")
-                print("-replaced")
-            line = line + '\n' + summary[0] + "Agent : " + '\n'+  summary[1]+ '\n' + senti + '\n' + clarityscore + '\n' + '\n' + tokensaver
+            transcription = Transcription(data,job_name,lang,file_path)
+            transcription.processWithGPT()
+
+            line = transcription.rawtrans
+            line = line + "speaker 0 most used word :" + str(transcription.most_used1) + "\nspeaker 1 most used word :"  + str(transcription.most_used2) + '\n'
+            line = line + '\nspeaker 0 pace :' + str(int(transcription.pace1)) + " WPM" + "  Spoke for a total of " + str(int(transcription.total1)) + " Seconds" + '\nspeaker 1 pace :' + str(int(transcription.pace2)) + " WPM" + "  Spoke for a total of " + str(int(transcription.total2)) + " Seconds"
+            line = line + '\nPauses for speaker 0 : ' + str(transcription.pause_counter1)
+            line = line + '\nPauses for speaker 1 : ' + str(transcription.pause_counter2)
+            line = line + '\nInterrupts for speaker 0 : ' + str(transcription.interrupts1)
+            line = line + '\nInterrupts for speaker 1 : ' + str(transcription.interrupts2)
+            line = line + '\nTotal Delay for speaker 0 : ' + str(int(transcription.sp1_delay))
+            line = line + '\nTotal Delay for speaker 1 : ' + str(int(transcription.sp2_delay))
+            line = line + '\n' + transcription.summary[0] + "Agent : " + '\n'+  transcription.summary[1]+ '\n' + transcription.sentiment + '\n' + transcription.clarity + '\n' + '\n' + transcription.tokensaver
+            line = transcription.applySpeakers(line)
         if data :
-            return line #Return URL for redirect
+            return line 
     else:
-        return download
+        return download #Return URL for redirec
         
 
 
