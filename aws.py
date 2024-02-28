@@ -68,9 +68,10 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
         with urllib.request.urlopen(download) as url:
             data = json.load(url)
             transcription = Transcription(data,job_name,lang,file_path)
+            
             transcription.processWithGPT()
 
-            line = transcription.rawtrans
+            """ line = transcription.rawtrans
             line = line + "speaker 0 most used word :" + str(transcription.most_used1) + "\nspeaker 1 most used word :"  + str(transcription.most_used2) + '\n'
             line = line + '\nspeaker 0 pace :' + str(int(transcription.pace1)) + " WPM" + "  Spoke for a total of " + str(int(transcription.total1)) + " Seconds" + '\nspeaker 1 pace :' + str(int(transcription.pace2)) + " WPM" + "  Spoke for a total of " + str(int(transcription.total2)) + " Seconds"
             line = line + '\nPauses for speaker 0 : ' + str(transcription.pause_counter1)
@@ -79,10 +80,11 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
             line = line + '\nInterrupts for speaker 1 : ' + str(transcription.interrupts2)
             line = line + '\nTotal Delay for speaker 0 : ' + str(int(transcription.sp1_delay))
             line = line + '\nTotal Delay for speaker 1 : ' + str(int(transcription.sp2_delay))
-            line = line + '\n' + transcription.summary[0] + "Agent : " + '\n'+  transcription.summary[1]+ '\n' + transcription.sentiment + '\n' + transcription.clarity + '\n' + '\n' + transcription.tokensaver
-            line = transcription.applySpeakers(line)
+            line = line + '\n' + transcription.summary[0] + "Agent : " + '\n'+  transcription.summary[1]+ '\n' + transcription.sentiment + '\n' + transcription.clarity + '\n' + '\n' + transcription.tokensaver """
+            """ line = transcription.applySpeakers(line) """
+            savepath = transcription.saveChart()
         if data :
-            return line 
+            return transcription 
     else:
         return download #Return URL for redirec
         

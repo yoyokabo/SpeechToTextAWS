@@ -3,11 +3,13 @@ from collections import Counter
 import statistics
 import re
 from ToGPT import *
+from genChart import genChart
+import os
 
 DELAY_THRESHOLD = 0.7
 MOST_COMMON_WORDS = 3
 PAUSE_THRESHOLD = 0.7
-
+CHARTS_DIR = os.path.join(os.getcwd(), 'Charts')
 
 
 class Transcription():
@@ -22,11 +24,11 @@ class Transcription():
         self.most_used2 = ''
         self.sp1_delay = 0.0
         self.sp2_delay = 0.0
-
-        self.rawtrans = self.parseSpeakers()
         self.parsePace()
         self.speechmatics()
+        self.rawtrans = self.parseSpeakers()
         self.tokensaver = self.parseSpeakers(False)
+        
         
         
         pass
@@ -176,6 +178,12 @@ class Transcription():
                                 self.sp2_delay += temp
             last_speaker = speaker_label
             previous_end_time = end_time
-        
+
+    def saveChart(self,sr=5):
+        savepath = os.path.join(CHARTS_DIR,self.name)
+        barpath = os.path.join(CHARTS_DIR,self.name + "bar")
+        genChart(self.filepath,savepath,sr)
+        self.savepath = savepath
+        return savepath        
     
 

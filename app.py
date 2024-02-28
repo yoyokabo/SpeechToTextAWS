@@ -1,6 +1,7 @@
+from transcription import *
 from flask import Flask, render_template, request, send_file , flash, url_for, redirect
 from aws import aws_contact
-from datetime import datetime
+from datetime import *
 import os
 from werkzeug.utils import secure_filename
 from converter import convert_mpeg_to_wav
@@ -13,7 +14,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('acess.html')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -40,11 +41,55 @@ def upload_file():
     typer = request.form['typer']
     lang = request.form['lang']
     print(typer)
-    processed_text = process_file(file,typer,lang)
+    processed = process_file(file,typer,lang)
+    processed_text = processed.rawtrans
+    if processed.agent:
+        msa = str(processed.most_used2)
+        dla = int(processed.sp2_delay)
+        inta = processed.interrupts2
+        psa = processed.pause_counter2
+        pacea = processed.pace2
+        talka = int(processed.total2)
+        msc = str(processed.most_used1)
+        dlc = int(processed.sp1_delay)
+        intc = processed.interrupts1
+        psc = processed.pause_counter1
+        pacec = processed.pace1
+        talkc = int(processed.total1)
+    else:
+        msc = str(processed.most_used2)
+        dlc = int(processed.sp2_delay)
+        intc = processed.interrupts2
+        psc = processed.pause_counter2
+        pacec = processed.pace2
+        talkc = int(processed.total2)
+        msa = str(processed.most_used1)
+        dla = int(processed.sp1_delay)
+        inta = processed.interrupts1
+        psa = processed.pause_counter1
+        pacea = processed.pace1
+        talka = int(processed.total1)
+    senticlear = processed.sentiment + "\n\n" + processed.clarity
 
     # Process text inline or redirect in case SRT or VTT
     if typer == "text":
-        return render_template('index.html', transcription=processed_text)
+        return render_template('acess.html', transcription=processed_text, 
+                               summary=processed.summary,
+                               paceagent = pacea,
+                               pacecustomer = pacec,
+                               interruptagent = inta,
+                               interruptcustomer = intc,
+                               delayagent = dla,
+                               delaycustomer = dlc,
+                               pauseagent = psa,
+                               pausecustomer = psc,
+                               mostagent = msa,
+                               mostcustomer = msc,
+                               senticlear = senticlear,
+                               talkingagent = talka,
+                               talkingcustomer = talkc,
+                               tokensaver = processed.tokensaver,
+                               png = processed.savepath)
     else:
         return redirect(processed_text)
 

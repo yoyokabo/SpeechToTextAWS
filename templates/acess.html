@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <center><title>File Upload</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f5f5f5;
+            }
+    
+            .container {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+    
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+    
+            th, td {
+                padding: 12px 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+    
+            th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+                color: #333;
+                text-transform: uppercase;
+            }
+    
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+    
+            tr:hover {
+                background-color: #f2f2f2;
+            }
+    
+        </style>
+</head>
+<body>
+
+    <h1>Transcribe a File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <p>Please select your desired format</p>
+        <input type="radio" id="srt" name="typer" value="srt">
+        <label for="srt">SRT</label><br>
+        <input type="radio" id="vtt" name="typer" value="vtt">
+        <label for="vtt">VTT</label><br>
+        <input type="radio" id="text" name="typer" value="text">
+        <label for="Text">Text</label>
+        <p>Please select language</p>
+        <input type="radio" id="ar-AE" name="lang" value="ar-AE">
+        <label for="srt">Arabic</label><br>
+        <input type="radio" id="en-US" name="lang" value="en-US">
+        <label for="Text">English</label><br><br>
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form><br>
+    <div class="container">
+    <h2>Transcribed Text</h2>
+    <form action="/" method="post">
+        <label for="text"></label><br>
+        <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ transcription }}</textarea><br><br>
+    </div>
+    <div class="container">
+        <h2>Summary</h2>
+        <form action="/" method="post">
+            <label for="text"></label><br>
+            <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ summary }}</textarea><br><br>
+        </div>
+            <div class="container">
+                <h2>Speechmatics</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Agent</th>
+                            <th>Customer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Talking duration</td>
+                            <td>{{ talkingagent }}</td>
+                            <td>{{ talkingcustomer }}</td>
+
+                        </tr>
+                        <tr>
+                            <td>Pace</td>
+                            <td>{{ paceagent }}</td>
+                            <td>{{ pacecustomer }}</td>
+
+                        </tr>
+                        <tr>
+                            <td>Interrupts</td>
+                            <td>{{ interruptagent }}</td>
+                            <td>{{ interruptcustomer }}</td>
+
+                        </tr>
+                        <tr>
+                            <td>Delay</td>
+                            <td>{{ delayagent }}</td>
+                            <td>{{ delaycustomer }}</td>
+
+                        </tr>
+                        <tr>
+                            <td>Pauses</td>
+                            <td>{{ pauseagent }}</td>
+                            <td>{{ pausecustomer }}</td>
+
+                        </tr>
+                        <tr>
+                            <td>Most used words</td>
+                            <td>{{ mostagent }}</td>
+                            <td>{{ mostcustomer }}</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="container">
+                    <h2>Sentiment and Clarity</h2>
+                    <form action="/" method="post">
+                        <label for="text"></label><br>
+                        <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ senticlear }}</textarea><br><br>
+            </div>
+            <div class="container">
+                <h2>TokenSaver Debug</h2>
+                <form action="/" method="post">
+                    <label for="text"></label><br>
+                    <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ tokensaver }}</textarea><br><br>
+        </div>
+        <div class="container">
+        <body>
+            <h1>Pie chart</h1>
+            <img src="{{ png }}" alt="{{ png }}">
+        </body>
+    </div>
+</form>
+    </form>
+</center>
+</body>
+</html>
