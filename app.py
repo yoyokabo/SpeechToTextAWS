@@ -2,6 +2,7 @@ from transcription import *
 from flask import Flask, render_template, request, send_file , flash, url_for, redirect
 from aws import aws_contact
 from datetime import *
+import time as ti
 import os
 from werkzeug.utils import secure_filename
 from converter import convert_mpeg_to_wav
@@ -70,7 +71,7 @@ def upload_file():
         pacea = processed.pace1
         talka = int(processed.total1)
     senticlear = processed.sentiment + "\n\n" + processed.clarity
-
+    ti.sleep(5)
     # Process text inline or redirect in case SRT or VTT
     if typer == "text":
         return render_template('acess.html', transcription=processed_text, 
