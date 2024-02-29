@@ -32,7 +32,7 @@ Always provide your answer in the following format:
 
 YESNO = """You are fluent in arabic
 Answer the following questions about the following conversation between a customer service agent and a customer in arabic :
-[1]Did the Agent use the call the customer by name?
+[1]Did the Agent use the customer's by name?
 [2]Was the Agent helpful / welcoming in the start of the conversation?
 
 Only answer in Yes or No
