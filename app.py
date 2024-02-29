@@ -70,8 +70,7 @@ def upload_file():
         psa = processed.pause_counter1
         pacea = processed.pace1
         talka = int(processed.total1)
-    senticlear = processed.sentiment + "\n\n" + processed.clarity
-    ti.sleep(5)
+    senticlear = processed.sentiment + "\n\n" + processed.clarity + "\n\n" + processed.yesno
     # Process text inline or redirect in case SRT or VTT
     if typer == "text":
         return render_template('acess.html', transcription=processed_text, 
