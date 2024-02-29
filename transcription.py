@@ -182,8 +182,7 @@ class Transcription():
 
     def saveChart(self,sr=5):
         savepath = os.path.join(CHARTS_DIR,self.name)
-        barpath = os.path.join(CHARTS_DIR,self.name + "bar")
-        genChart(self.filepath,savepath,sr)
+        #genChart(self.filepath,savepath,sr)
         self.savepath = savepath + ".png"
         return self.savepath        
     
