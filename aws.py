@@ -41,7 +41,7 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
                       "MaxSpeakerLabels" : 2})   #Send proper format type
 
     #Main initilization of API request
-    max_tries = 60
+    max_tries = 600
     while max_tries > 0:
         max_tries -= 1
         job = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
