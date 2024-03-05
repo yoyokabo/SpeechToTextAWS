@@ -5,6 +5,7 @@ import re
 from ToGPT import *
 from genChart import genChart
 import os
+from helpers import stoMSconverted
 
 DELAY_THRESHOLD = 0.7
 MOST_COMMON_WORDS = 3
@@ -144,13 +145,19 @@ class Transcription():
     
     def speechmatics(self):
         self.pause_counter1 = 0
+        self.pause_counter1s = ''
         self.pause_counter2 = 0
+        self.pause_counter2s = ''
         last_speaker = ''
         previous_end_time = 0
         self.sp1_delay = 0
+        self.sp1_delays = ''
         self.sp2_delay = 0
+        self.sp2_delays = ''
         self.interrupts1 = 0
+        self.interrupts1s = ''
         self.interrupts2 = 0
+        self.interrupts2s = ''
         segments = self.data['results']['speaker_labels']['segments']
         for segment in segments:
             start_time = segment['start_time']
@@ -162,21 +169,27 @@ class Transcription():
                     if temp > PAUSE_THRESHOLD:
                         if speaker_label == "spk_0":
                             self.pause_counter1 += 1
+                            self.pause_counter1s += f"[{self.pause_counter1}]" + "Pause from : " + stoMSconverted(float(previous_end_time)) + "to :" + stoMSconverted(float(start_time)) + '\n'
                         else:
                             self.pause_counter2 += 1
+                            self.pause_counter2s += f"[{self.pause_counter2}]" + "Pause from : " + stoMSconverted(float(previous_end_time)) + "to :" + stoMSconverted(float(start_time)) + '\n'
                 else:
                     if float(previous_end_time) >= float(start_time):
                         if speaker_label == "spk_0":
                             self.interrupts1 += 1
+                            self.interrupts1s += f"[{self.interrupts1}]" + stoMSconverted(float(start_time)) + '\n'
                         else:
                             self.interrupts2 += 1
+                            self.interrupts2s += f"[{self.interrupts2}]" + stoMSconverted(float(start_time))+ '\n'
                     else:
                         temp = float(start_time) - float(previous_end_time)
                         if temp > DELAY_THRESHOLD:
                             if speaker_label == "spk_0":
                                 self.sp1_delay += temp
+                                self.sp1_delays += f"[{self.sp1_delay}]" + "Delay from : " + stoMSconverted(float(previous_end_time)) + "to :" + stoMSconverted(float(start_time)) + '\n'
                             else:
                                 self.sp2_delay += temp
+                                self.sp2_delays += f"[{self.sp2_delay}]" + "Delay from : " + stoMSconverted(float(previous_end_time)) + "to :" + stoMSconverted(float(start_time)) + '\n'
             last_speaker = speaker_label
             previous_end_time = end_time
 

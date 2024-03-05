@@ -19,4 +19,4 @@ Supported formats mp3 , mp4 , wav , flac , ogg , amr , webm , m4a , mpeg.
 
 2/29 - Some extra GPT functionality
 
-
+3/5 - Added debug for speechmatics

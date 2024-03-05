@@ -6,6 +6,7 @@ import time as ti
 import os
 from werkzeug.utils import secure_filename
 from converter import convert_mpeg_to_wav
+from helpers import count_words
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'Uploads')
 ALLOWED_EXTENSIONS = {'mp3', 'mp4', 'wav', 'flac', 'ogg', 'amr' , 'webm' , 'm4a' , 'mpeg'} #All formats supported by AWS
@@ -41,6 +42,7 @@ def upload_file():
 
     typer = request.form['typer']
     lang = request.form['lang']
+    fillerwords = request.form['filler']
     print(typer)
     processed = process_file(file,typer,lang)
     processed_text = processed.rawtrans
@@ -57,6 +59,8 @@ def upload_file():
         psc = processed.pause_counter1
         pacec = processed.pace1
         talkc = int(processed.total1)
+        spechs = "Customer speechmatics :" + "Interrupts speechmatics :"  + '\n'+ processed.interrupts1s  + '\n'+"pause speechmatics :"  + '\n'+ processed.pause_counter1s  + '\n'+ "delays speechmatics :"  + '\n'+ processed.sp1_delays + "\n\n"
+        spechs += "Agent speechmatics :" + "Interrupts speechmatics :"  + '\n'+ processed.interrupts2s  + '\n'+ "pause speechmatics :"  + '\n'+ processed.pause_counter2s  + '\n'+ "delays speechmatics :"  + '\n'+ processed.sp2_delays + "\n\n"
     else:
         msc = str(processed.most_used2)
         dlc = int(processed.sp2_delay)
@@ -70,7 +74,10 @@ def upload_file():
         psa = processed.pause_counter1
         pacea = processed.pace1
         talka = int(processed.total1)
+        spechs = "Agent speechmatics :" + "Interrupts speechmatics :"  + '\n'+ processed.interrupts1s  + '\n'+"pause speechmatics :"  + '\n'+ processed.pause_counter1s + "delays speechmatics :"  + '\n'+ processed.sp1_delays + "\n\n"
+        spechs += "Customer speechmatics :" + "Interrupts speechmatics :"  + '\n'+ processed.interrupts2s  + '\n'+ "pause speechmatics :"  + '\n'+ processed.pause_counter2s + "delays speechmatics :"  + '\n'+ processed.sp2_delays + "\n\n"
     senticlear = processed.sentiment + "\n\n" + processed.clarity + "\n\n" + processed.yesno
+    filler = count_words(processed.tokensaver,fillerwords)
     # Process text inline or redirect in case SRT or VTT
     if typer == "text":
         return render_template('acess.html', transcription=processed_text, 
@@ -89,7 +96,9 @@ def upload_file():
                                talkingagent = talka,
                                talkingcustomer = talkc,
                                tokensaver = processed.tokensaver,
-                               png = processed.savepath)
+                               png = processed.savepath,
+                               filler=filler,
+                               spechs = spechs)
     else:
         return redirect(processed_text)
 

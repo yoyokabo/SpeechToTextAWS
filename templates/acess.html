@@ -52,7 +52,6 @@
         </style>
 </head>
 <body>
-
     <h1>Transcribe a File</h1>
     <form action="/upload" method="post" enctype="multipart/form-data">
         <p>Please select your desired format</p>
@@ -62,6 +61,8 @@
         <label for="vtt">VTT</label><br>
         <input type="radio" id="text" name="typer" value="text">
         <label for="Text">Text</label>
+        <p>List of filler words</p>
+        <input type="text" name="filler" placeholder="seprate the word by ,">
         <p>Please select language</p>
         <input type="radio" id="ar-AE" name="lang" value="ar-AE">
         <label for="srt">Arabic</label><br>
@@ -143,6 +144,18 @@
                     <label for="text"></label><br>
                     <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ tokensaver }}</textarea><br><br>
         </div>
+        <div class="container">
+            <h2>filler</h2>
+            <form action="/" method="post">
+                <label for="text"></label><br>
+                <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ filler }}</textarea><br><br>
+    </div>
+    <div class="container">
+        <h2>speechmatics debug</h2>
+        <form action="/" method="post">
+            <label for="text"></label><br>
+            <textarea id="transcription" name="textarea" rows="20" cols="90" >{{ spechs }}</textarea><br><br>
+</div>
         <div class="container">
         <body>
             <h1>Pie chart</h1>
