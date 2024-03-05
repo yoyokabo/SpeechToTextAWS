@@ -199,4 +199,3 @@ class Transcription():
         self.savepath = savepath + ".png"
         return self.savepath        
     
-
