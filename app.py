@@ -76,7 +76,7 @@ def upload_file():
         talka = int(processed.total1)
         spechs = "Agent speechmatics :" + "Interrupts speechmatics :"  + '\n'+ processed.interrupts1s  + '\n'+"pause speechmatics :"  + '\n'+ processed.pause_counter1s + "delays speechmatics :"  + '\n'+ processed.sp1_delays + "\n\n"
         spechs += "Customer speechmatics :" + "Interrupts speechmatics :"  + '\n'+ processed.interrupts2s  + '\n'+ "pause speechmatics :"  + '\n'+ processed.pause_counter2s + "delays speechmatics :"  + '\n'+ processed.sp2_delays + "\n\n"
-    senticlear = processed.sentiment + "\n\n" + processed.clarity + "\n\n" + processed.yesno
+    senticlear = processed.sentiment + "\n\n" + processed.clarity + "\n\n" + processed.yesno + "\n \n" + processed.compare
     filler = count_words(processed.tokensaver,fillerwords)
     # Process text inline or redirect in case SRT or VTT
     if typer == "text":

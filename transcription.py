@@ -42,6 +42,7 @@ class Transcription():
         self.sentiment = getFromGPT(SENTIMENT,self.tokensaver)
         self.clarity = getFromGPT(CLARITY,self.tokensaver)
         self.yesno = getFromGPT(YESNO,self.tokensaver)
+        self.compare = getFromGPT(COMPARE,self.tokensaver)
         
     
     def applySpeakers(self,text):

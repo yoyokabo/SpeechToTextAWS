@@ -1,9 +1,10 @@
 from openai import OpenAI
 import json
 from envparam import OPENAI_API_KEY
+maxcontext = 8193
 
 SENTIMENT = """You are fluent in arabic.
-Your job is to analyze the sentiment and mood of every line in the conversation and give it a label based on your analysis 
+Your job is to analyze the sentiment of every line in the conversation and give it a label based on your analysis 
 Labels:
       Positive
       Neutral
@@ -35,7 +36,54 @@ Answer the following questions about the following conversation between a custom
 [1]Did the Agent use the customer's by name?
 [2]Was the Agent helpful / welcoming in the start of the conversation?
 
-Only answer in Yes or No
+Only answer with Yes or No
+"""
+
+COMPARE = """You are fluent in arabic
+You are analyzing a conversation between a customer service agent and a customer in arabic the agents's job is to try to provide accurate information to the customer by using the knowledge base.
+Your job is to compare between agent's responses the the customer's questions and the knowledge bases and to check if the agent's responses were accurate to the knowledge base provided and answer the following questions
+
+[1]If the answer to the customer's questions is in the knowledge base did the agent give wrong information when compared to the knowledge base
+[2]Did at any point answer a customer' questions with knowledge outside the knowledge base
+[3]Were the answers given by the agent to the customer's questions accurate and correct when compared to the knowledge base
+
+
+
+Knowledge base :  بحال توفى المؤمن عليه ولا يشترط وجود عدد اشتراكات . 
+
+ ثبوت حالة العجز الطبيعي سواء كلي او جزئي خارج خدمته المشمولة . 
+
+اكمال المؤمن عليه السن خارج خدمته المشمولة دون اكمال المدة الموجبة لااستحقاق الراتب ( 180 اشتراك ) . 
+
+ اذا كان المؤمن عليه اردني وقام ب الاستغناء عن الجنسية الاردنية او معه جنسية اخرى. 
+
+انتهاء خدمة المؤمن عليه الاردني والحكم عليه بالسجن حكم قطعي لمدة لا تقل عن سنتين ويجب ان يكون داخل السجن . 
+
+ انتهاء خدمة المؤمن عليه الاردني وغير الاردني الذي اكمل سن 55 للذكر والمؤمن عليها 50 انثى , بشرط ان لا تزيد عدد الاشتراكات عن 83 اشتراك وان يكون قد انقطع عن الشمول مدة لا تقل عن 36 اشتراك . 
+
+انتهاء خدمة المؤمن عليه الاردني الحاصل على راتب تقاعد بموجب قانون التقاعد المدني او العسكري شريطة ان تقل اشتراكاته عن 120 اشتراك ولا يقل عمره عن 50 سنه . 
+
+ بحال كان المؤمن عليه عمره اقل من 25 سنة وبهدف دراسة البكالوريوس . 
+
+ فقط ل اردنية الجنسية , انتهاء خدمة المؤمن عليها الاردنية بسبب الزواج والطلاق والترمل . 
+
+ انتهاء خدمة المؤمن عليها الاردنية العزباء 40 وفوق . 
+
+ انتهاء خدمة المؤمن عليه الغير اردني بحال مغادرة البلاد . 
+
+* الجنسيات التي تقوم بصرف تعويض الدفعة الواحدة بسبب مغادرة البلاد دون الحاجة للمغادرة * 
+
+ الفلسطيني – ابناء قطاع غزة – سوري الجنسية – ابناء الاردنيات – زوجات الاردنيين – ازواج الاردنيات   
+
+  
+
+ 
+
+ يستطيع الاردني طلب تعويض الدفعة الواحدة 3 مرات خلال فترة شموله بالضمان وبين كل صرف وصرف 60 اشتراك فعلي
+
+
+
+
 """
 
 
