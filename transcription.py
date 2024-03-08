@@ -14,7 +14,7 @@ CHARTS_DIR = os.path.join(os.getcwd(), 'Charts')
 
 
 class Transcription():
-    def __init__(self, data, name, lang, filepath) -> None:
+    def __init__(self, data, name='json', lang='json', filepath='json') -> None:
         self.name = name
         self.data = data
         self.lang = lang
@@ -36,9 +36,10 @@ class Transcription():
 
     
     def processWithGPT(self):
-        self.summary = getFromGPT(SUMMARIZE,self.rawtrans).split('@')
+        self.agents = getFromGPT(AGENT,self.rawtrans[0:500]).split('@')
         self.tokensaver = self.applySpeakers(self.tokensaver)
         self.rawtrans = self.applySpeakers(self.rawtrans)
+        self.summary = getFromGPT(SUMMARIZE,self.rawtrans)
         self.sentiment = getFromGPT(SENTIMENT,self.tokensaver)
         self.clarity = getFromGPT(CLARITY,self.tokensaver)
         self.yesno = getFromGPT(YESNO,self.tokensaver)
@@ -46,7 +47,7 @@ class Transcription():
         
     
     def applySpeakers(self,text):
-        if 'spk_0' in self.summary[1]:
+        if 'spk_0' in self.agents[1]:
             text = text.replace("spk_0","Agent")
             text = text.replace("spk_1","Customer")
             text = text.replace("speaker 0","Agent")
@@ -199,4 +200,6 @@ class Transcription():
         genChart(self.filepath,savepath,sr)
         self.savepath = savepath + ".png"
         return self.savepath        
+    
+
     

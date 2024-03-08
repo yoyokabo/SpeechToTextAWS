@@ -1,3 +1,5 @@
+
+
 def count_word_occurrences(text, word):
     # split the text into words
     words = text.split()
@@ -41,3 +43,18 @@ def stoMSconverted(seconds):
         seconds = seconds - 60
     seconds = int(seconds) 
     return f'[00:{m}:{seconds}]'
+
+def chunk_text_if_large(text, chunk_size=3000):
+    if len(text) <= chunk_size:
+        return [text]
+    else:
+        chunks = []
+        for i in range(0, len(text), chunk_size):
+            chunks.append(text[i:i+chunk_size])
+        return chunks
+
+
+        
+
+        
+
