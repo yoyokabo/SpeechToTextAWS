@@ -5,12 +5,14 @@ import re
 from ToGPT import *
 from genChart import genChart
 import os
-from helpers import stoMSconverted
+from helpers import stoMSconverted , cleaner
+import codecs
 
 DELAY_THRESHOLD = 0.7
 MOST_COMMON_WORDS = 3
 PAUSE_THRESHOLD = 0.7
 CHARTS_DIR = os.path.join(os.getcwd(), 'Charts')
+SAVED_DIR = os.path.join(os.getcwd(), 'Saved')
 
 
 class Transcription():
@@ -40,8 +42,8 @@ class Transcription():
         self.tokensaver = self.applySpeakers(self.tokensaver)
         self.rawtrans = self.applySpeakers(self.rawtrans)
         self.summary = getFromGPT(SUMMARIZE,self.rawtrans)
-        self.sentiment = getFromGPT(SENTIMENT,self.tokensaver)
-        self.clarity = getFromGPT(CLARITY,self.tokensaver)
+        self.sentiment = cleaner('Neutral',getFromGPT(SENTIMENT,self.tokensaver))
+        self.clarity = cleaner('True',getFromGPT(CLARITY,self.tokensaver))
         self.yesno = getFromGPT(YESNO,self.tokensaver)
         self.compare = getFromGPT(COMPARE,self.tokensaver)
         
@@ -199,7 +201,57 @@ class Transcription():
         savepath = os.path.join(CHARTS_DIR,self.name)
         genChart(self.filepath,savepath,sr)
         self.savepath = savepath + ".png"
-        return self.savepath        
+        return self.savepath 
+
+    def tostringsave(self):
+        
+        self_text = self.rawtrans
+
+        if self.agent:
+                msa = str(self.most_used2)
+                dla = int(self.sp2_delay)
+                inta = self.interrupts2
+                psa = self.pause_counter2
+                pacea = self.pace2
+                talka = int(self.total2)
+                msc = str(self.most_used1)
+                dlc = int(self.sp1_delay)
+                intc = self.interrupts1
+                psc = self.pause_counter1
+                pacec = self.pace1
+                talkc = int(self.total1)
+                spechs = "Customer speechmatics :" + "Interrupts speechmatics :"  + '\n'+ self.interrupts1s  + '\n'+"pause speechmatics :"  + '\n'+ self.pause_counter1s  + '\n'+ "delays speechmatics :"  + '\n'+ self.sp1_delays + "\n\n"
+                spechs += "Agent speechmatics :" + "Interrupts speechmatics :"  + '\n'+ self.interrupts2s  + '\n'+ "pause speechmatics :"  + '\n'+ self.pause_counter2s  + '\n'+ "delays speechmatics :"  + '\n'+ self.sp2_delays + "\n\n"
+        else:
+                msc = str(self.most_used2)
+                dlc = int(self.sp2_delay)
+                intc = self.interrupts2
+                psc = self.pause_counter2
+                pacec = self.pace2
+                talkc = int(self.total2)
+                msa = str(self.most_used1)
+                dla = int(self.sp1_delay)
+                inta = self.interrupts1
+                psa = self.pause_counter1
+                pacea = self.pace1
+                talka = int(self.total1)
+                spechs = "Agent speechmatics :" + "Interrupts speechmatics :"  + '\n'+ self.interrupts1s  + '\n'+"pause speechmatics :"  + '\n'+ self.pause_counter1s + "delays speechmatics :"  + '\n'+ self.sp1_delays + "\n\n"
+                spechs += "Customer speechmatics :" + "Interrupts speechmatics :"  + '\n'+ self.interrupts2s  + '\n'+ "pause speechmatics :"  + '\n'+ self.pause_counter2s + "delays speechmatics :"  + '\n'+ self.sp2_delays + "\n\n"
+
+        senticlear = self.sentiment + "\n\n" + self.clarity + "\n\n" + self.yesno + "\n \n" + self.compare
+
+        tostring = ''
+        tostring += "\n\n\n\n\n\n\n\n\n\nAudio File : " + self.filepath
+        tostring += "\n\n\n\n\nTranscript : " + self_text
+        tostring += "\n\n\n\n\nSummary : " + self.summary
+        tostring += "\n\n\n\n\nSpeechmatics Debug : " + spechs
+        tostring += "\n\n\n\n\nGPT's outputs : " + senticlear
+        tostring += "\n\n\n\n\nToken Debug : " + self.tokensaver
+
+        with codecs.open(os.path.join(SAVED_DIR,self.name),"w",'utf-8') as file:
+            file.write(tostring)
+            file.close
+     
     
 
     

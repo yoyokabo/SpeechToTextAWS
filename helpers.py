@@ -54,7 +54,11 @@ def chunk_text_if_large(text, chunk_size=3000):
         return chunks
 
 
-        
+def cleaner(ommit,text):
+    lines = text.split('\n')
+    filtered = [line for line in lines if ommit not in line]
+    result = '\n'.join(filtered)
+    return result
 
         
 

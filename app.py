@@ -46,6 +46,7 @@ def upload_file():
     print(typer)
     processed = process_file(file,typer,lang)
     processed_text = processed.rawtrans
+    processed.tostringsave()
     if processed.agent:
         msa = str(processed.most_used2)
         dla = int(processed.sp2_delay)
