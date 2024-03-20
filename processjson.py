@@ -3,7 +3,7 @@ import json
 import codecs
 
 
-jsonfile = 'jsons/1c2de64617edc07f6fc8239522aebe6c-removed.json'
+jsonfile = 'jsons/aex5.json'
 
 audiofile = jsonfile.split('.')[0].split('/')[1]
 
@@ -54,7 +54,7 @@ tostring += "\n\n\n\n\nTranscript : " + processed_text
 tostring += "\n\n\n\n\nSummary : " + processed.summary
 tostring += "\n\n\n\n\nSpeechmatics Debug : " + spechs
 tostring += "\n\n\n\n\nGPT's outputs : " + senticlear
-tostring += "\n\n\n\n\nToken Debug : " + processed.tokensaver
+tostring += "\n\n\n\n\nToken Debug : " + processed.matched
 
 with codecs.open('jsonsoutput.txt',"a",'utf-8') as file:
        file.write(tostring)

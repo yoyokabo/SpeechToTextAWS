@@ -22,3 +22,5 @@ Supported formats mp3 , mp4 , wav , flac , ogg , amr , webm , m4a , mpeg.
 3/5 - Added debug for speechmatics
 
 3/8 - Added json processor and added chunking to GPT to accept inputs of any length and cleaned GPT output
+
+3/20 - Cleaned Code 

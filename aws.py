@@ -1,6 +1,7 @@
 import boto3
 import datetime
-import urllib.request, json
+import urllib.request
+import json
 import os
 import time
 from collections import Counter
@@ -9,7 +10,7 @@ from transcription import *
 from ToGPT import *
 
 
-def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
+def aws_contact(file_path, bucket_name, job_name, format, typer, lang):
 
     transcribe_client = boto3.client('transcribe')
     print(typer)
@@ -21,54 +22,54 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
 
     file_uri = "s3://{0}/{1}".format(bucket_name, object_name)
 
-    
     if typer == "text":
         transcribe_client.start_transcription_job(
             TranscriptionJobName=job_name,
             Media={"MediaFileUri": file_uri},
             MediaFormat=format,
             LanguageCode=lang,
-            Settings={"ShowSpeakerLabels" : True ,
-                      "MaxSpeakerLabels" : 2})
+            Settings={"ShowSpeakerLabels": True,
+                      "MaxSpeakerLabels": 2})
     else:
         transcribe_client.start_transcription_job(
             TranscriptionJobName=job_name,
             Media={"MediaFileUri": file_uri},
             MediaFormat=format,
             LanguageCode=lang,
-            Subtitles= {'Formats' : [typer]},
-            Settings={"ShowSpeakerLabels" : True ,
-                      "MaxSpeakerLabels" : 2})   #Send proper format type
+            Subtitles={'Formats': [typer]},
+            Settings={"ShowSpeakerLabels": True,
+                      "MaxSpeakerLabels": 2})  # Send proper format type
 
-    #Main initilization of API request
+    # Main initilization of API request
     max_tries = 120
     while max_tries > 0:
         max_tries -= 1
-        job = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
+        job = transcribe_client.get_transcription_job(
+            TranscriptionJobName=job_name)
         job_status = job["TranscriptionJob"]["TranscriptionJobStatus"]
-
 
         if job_status in ["COMPLETED", "FAILED"]:
             print(f"Job {job_name} is {job_status}.")
-            if job_status == "COMPLETED": 
+            if job_status == "COMPLETED":
                 print(
                     f"Download the transcript from\n"
-                    f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}."
-                    )
+                    f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}.")
                 if typer == 'text':
                     download = job['TranscriptionJob']['Transcript']['TranscriptFileUri']
                 else:
-                    download = job['TranscriptionJob']['Subtitles']['SubtitleFileUris'][0] #Slicing URL
+                    # Slicing URL
+                    download = job['TranscriptionJob']['Subtitles']['SubtitleFileUris'][0]
                     print(download)
                 break
             else:
-                print(f"Waiting for {job_name}. Current status is {job_status}.")
+                print(
+                    f"Waiting for {job_name}. Current status is {job_status}.")
         time.sleep(10)
     if typer == "text":
         with urllib.request.urlopen(download) as url:
             data = json.load(url)
-            transcription = Transcription(data,job_name,lang,file_path)
-            
+            transcription = Transcription(data, job_name, lang, file_path)
+
         transcription.processWithGPT()
 
         """ line = transcription.rawtrans
@@ -83,11 +84,7 @@ def aws_contact(file_path,bucket_name,job_name,format,typer,lang):
         line = line + '\n' + transcription.summary[0] + "Agent : " + '\n'+  transcription.summary[1]+ '\n' + transcription.sentiment + '\n' + transcription.clarity + '\n' + '\n' + transcription.tokensaver """
         """ line = transcription.applySpeakers(line) """
         savepath = transcription.saveChart()
-        if data :
-            return transcription 
+        if data:
+            return transcription
     else:
-        return download #Return URL for redirec
-        
-
-
-
+        return download  # Return URL for redirec

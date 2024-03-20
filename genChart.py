@@ -11,21 +11,22 @@ def analyze_loudness(audio_file, segment_duration):
     rms_values = []
 
     for i in range(num_segments):
-        segment = y[i * segment_samples : (i + 1) * segment_samples]
+        segment = y[i * segment_samples: (i + 1) * segment_samples]
         rms = librosa.feature.rms(y=segment)
         average_rms = np.mean(rms)
         rms_values.append(average_rms)
 
     return rms_values
 
-def genChart(audio_file,chartpath,barpath,segment_duration=5):
+
+def genChart(audio_file, chartpath, barpath, segment_duration=5):
     segment_rms = analyze_loudness(audio_file, segment_duration)
     avg = np.average(segment_rms)
-    high = avg*1.4
-    silent = avg*0.5
-    low = avg*0.7
+    high = avg * 1.4
+    silent = avg * 0.5
+    low = avg * 0.7
     lowcount = 0
-    highcount = 0 
+    highcount = 0
     normalcount = 0
     segmentsnum = 0
     silentcount = 0
@@ -43,13 +44,13 @@ def genChart(audio_file,chartpath,barpath,segment_duration=5):
             continue
         if segment > high:
             highcount += 1
-    mylabels = ["Silent","Low","Normal","High"]
-    pies = np.array([silentcount,lowcount,normalcount,highcount])
-    #plt.plot(time, segment_rms)
-    #plt.xlabel('Time (seconds)')
-    #plt.ylabel('RMS')
+    mylabels = ["Silent", "Low", "Normal", "High"]
+    pies = np.array([silentcount, lowcount, normalcount, highcount])
+    # plt.plot(time, segment_rms)
+    # plt.xlabel('Time (seconds)')
+    # plt.ylabel('RMS')
     plt.title('Loudness')
-    wedge , text =plt.pie(pies,colors=['c','b','g','r'],shadow=True)
+    wedge, text = plt.pie(pies, colors=['c', 'b', 'g', 'r'], shadow=True)
     for w in wedge:
         w.set_linewidth(2)
         w.set_edgecolor('black')
@@ -66,9 +67,5 @@ def genChart(audio_file,chartpath,barpath,segment_duration=5):
     plt.axhline(y=high, color='r', linestyle='-')
     plt.axhline(y=silent, color='r', linestyle='-')
     plt.grid(True)
-    plt.show()    
+    plt.show()
     plt.close() """
-
-
-
-
